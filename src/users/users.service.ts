@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './user.entity';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,8 +14,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async register(createUserDto: CreateUserDTO): Promise<User> {
-    const { username, password } = createUserDto;
+  async register(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+    const { username, password } = authCredentialsDto;
 
     const checkExistingUser = await this.usersRepository.findOne({
       where: { username },
@@ -32,5 +32,9 @@ export class UsersService {
     });
 
     return this.usersRepository.save(user);
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { username } });
   }
 }
